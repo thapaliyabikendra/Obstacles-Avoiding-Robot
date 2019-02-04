@@ -20,9 +20,9 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
-epochs = 5
+epochs = 3
 memory = []
-max_memory = 256
+max_memory = 500
 iframe = 0
 camera = PiCamera()
 camera.resolution = (WIDTH, HEIGHT)
@@ -32,8 +32,7 @@ sleep(0.1)
 yolo_proc = Popen(["./darknet",
                    "detect",
                    "./cfg/yolov3-tiny.cfg",
-                   "./yolov3-tiny.weights",
-                   "-thresh","0.1"],
+                   "./yolov3-tiny.weights"],
                    stdin = PIPE, stdout = PIPE)
 
 fcntl.fcntl(yolo_proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
@@ -45,7 +44,7 @@ model.add(Conv2D(32, (3, 3), activation='relu'))
 model.add(MaxPooling2D(2))
 model.add(Flatten())
 model.add(Dense(64, activation='relu'))
-model.add(Dense(3, activation='linear'))
+model.add(Dense(3, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
 #model.summary()
 
@@ -127,7 +126,7 @@ for i in range(epochs):
 			action = np.random.randint(0, moves, size=1)[0]
 		else:
 			output = model.predict(input_img)
-			print(output.shape)
+			print('output',output.shape)
 			action = np.argmax(output[0])
 		if int(action) == 0:
 			forward(4)
@@ -162,7 +161,7 @@ for i in range(epochs):
 			target_reward = reward + learningRate * \
 			np.amax(model.predict(input_next_img)[0])
 		desired_target = model.predict(input_img)
-		print(desired_target)
+		print('desired_target', desired_target,target_reward, action)
 		desired_target[0][action] = target_reward
 		model.fit(input_img, desired_target, epochs=1, verbose=0)
 	if epsilon > epsilon_min:
