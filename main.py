@@ -94,17 +94,18 @@ def getFrames():
 	errors = False
 	im = np.zeros((WIDTH, HEIGHT, 3), np.uint8)
 	try:
-		stdout = yolo_proc.stdout.read()
+		stdout = yolo_proc.stdout.read().decode('utf-8')
 		if 'Enter Image Path' in stdout:
 			try:
 				im = cv2.imread('predictions.png')
 				cv2.imshow('yolov3-tiny', im)
-				key = cv2.waitKey(1)
+				key = cv2.waitKey(5)
 				print(im.shape)
 			except Exception:
 				pass
 			camera.capture('frame.jpg')
-			yolo_proc.stdin.write('frame.jpg\n')
+			yolo_proc.stdin.write(b'frame.jpg\n')
+			yolo_proc.stdin.flush()
 		if len(stdout.strip())>0:
 			print('get %s' % stdout)
 			errors = True
