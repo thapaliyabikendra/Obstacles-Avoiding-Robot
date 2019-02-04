@@ -11,6 +11,10 @@ import time
 import numpy as np
 import random
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
+WIDTH, HEIGHT = 320, 240
+CHANNEL = 1
 moves = 3
 learningRate = 0.9
 epsilon = 1.0
@@ -21,7 +25,7 @@ memory = []
 max_memory = 500
 iframe = 0
 camera = PiCamera()
-camera.resolution = (608, 608)
+camera.resolution = (WIDTH, HEIGHT)
 camera.capture('frame.jpg')
 sleep(0.1)
 
@@ -35,13 +39,15 @@ yolo_proc = Popen(["./darknet",
 fcntl.fcntl(yolo_proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
 model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=(608, 608, 3), activation = 'relu'))
-model.add(Conv2D(64, (3, 3), activation = 'relu'))
-model.add(Conv2D(128, (3, 3), activation = 'relu'))
+model.add(Conv2D(32, (3, 3), input_shape=(WIDTH, HEIGHT, CHANNEL), activation='relu'))
+model.add(MaxPooling2D(2))
+model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(MaxPooling2D(2))
 model.add(Flatten())
-model.add(Dense(512, activation = 'relu'))
-model.add(Dense(3, activation = 'softmax'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(3, activation='linear'))
 model.compile(loss='categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
+#model.summary()
 
 def init():
 	gpio.setmode(gpio.BCM)
@@ -86,7 +92,7 @@ def right(tf):
 
 def getFrames():
 	errors = True
-	im = []
+	im = np.zeros((WIDTH, HEIGHT, 3), np.uint8)
 	try:
 		stdout = yolo_proc.stdout.read()
 		if 'Enter Image Path' in stdout:
@@ -101,15 +107,18 @@ def getFrames():
 			yolo_proc.stdin.write('frame.jpg\n')
 		if len(stdout.strip())>0:
 			print('get %s' % stdout)
-			errors = False
+			errors = True
 	except Exception:
 		pass
+	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
 	return im, errors
 
 for i in range(epochs):
 	time.sleep(5)
 	game_over = False
 	input_img, errors = getFrames()
+	print(errors, 'initial image')
 	errors = False
 	reward = 0
 	while game_over==False:
@@ -117,14 +126,20 @@ for i in range(epochs):
 			action = np.random.randint(0, moves, size=1)[0]
 		else:
 			output = model.predict(input_img)
+			print(output.shape)
 			action = np.argmax(output[0])
 		if int(action) == 0:
 			forward(4)
+			print('forward')
 		elif int(action) == 1:
 			right(4)
+			print('right')
 		else:
 			left(4)
+			print('left')
 		input_next_img, errors = getFrames()
+		print(errors)
+		print('next image',input_next_img.shape)
 		if errors == False:
 			reward = reward + 1
 		else:
@@ -146,6 +161,7 @@ for i in range(epochs):
 			target_reward = reward + learningRate * \
 			np.amax(model.predict(input_next_img)[0])
 		desired_target = model.predict(input_img)
+		print(desired_target)
 		desired_target[0][action] = target_reward
 		model.fit(input_img, desired_target, epochs=1, verbose=0)
 	if epsilon > epsilon_min:
