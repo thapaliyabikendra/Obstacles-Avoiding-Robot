@@ -10,8 +10,8 @@ import RPi.GPIO as gpio
 import time
 import numpy as np
 import random
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import logging
+logging.getLogger('tensorflow').setLevel(logging.INFO)
 
 WIDTH, HEIGHT = 320, 240
 CHANNEL = 1
@@ -20,9 +20,9 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
-epochs = 10
+epochs = 5
 memory = []
-max_memory = 500
+max_memory = 256
 iframe = 0
 camera = PiCamera()
 camera.resolution = (WIDTH, HEIGHT)
@@ -91,7 +91,7 @@ def right(tf):
 	gpio.cleanup()
 
 def getFrames():
-	errors = True
+	errors = False
 	im = np.zeros((WIDTH, HEIGHT, 3), np.uint8)
 	try:
 		stdout = yolo_proc.stdout.read()
@@ -166,3 +166,5 @@ for i in range(epochs):
 		model.fit(input_img, desired_target, epochs=1, verbose=0)
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
+
+model.save('clf.h5')
