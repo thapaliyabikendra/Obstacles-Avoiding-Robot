@@ -20,7 +20,7 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
-epochs = 3
+epochs = 8
 memory = []
 max_memory = 500
 iframe = 0
@@ -55,7 +55,7 @@ def init():
 	gpio.setup(23, gpio.OUT)
 	gpio.setup(24, gpio.OUT)
 
-def forward(tf):
+def reverse(tf):
 	init()
 	gpio.output(17, True)
 	gpio.output(22, False)
@@ -64,7 +64,7 @@ def forward(tf):
 	time.sleep(tf)
 	gpio.cleanup()
 
-def reverse(tf):
+def forward(tf):
 	init()
 	gpio.output(17, False)
 	gpio.output(22, True)
