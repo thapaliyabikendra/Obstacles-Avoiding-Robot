@@ -10,8 +10,6 @@ import RPi.GPIO as gpio
 import time
 import numpy as np
 import random
-import logging
-logging.getLogger('tensorflow').setLevel(logging.INFO)
 
 WIDTH, HEIGHT = 320, 240
 CHANNEL = 1
@@ -20,21 +18,20 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
-epochs = 8
+epochs = 20
 memory = []
-max_memory = 500
+max_memory = 512
 iframe = 0
 camera = PiCamera()
 camera.resolution = (WIDTH, HEIGHT)
 camera.capture('frame.jpg')
-sleep(0.1)
 
 yolo_proc = Popen(["./darknet",
                    "detect",
                    "./cfg/yolov3-tiny.cfg",
-                   "./yolov3-tiny.weights"],
+                   "./yolov3-tiny.weights",
+                   "-thresh","0.1"],
                    stdin = PIPE, stdout = PIPE)
-
 fcntl.fcntl(yolo_proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
 model = Sequential()
@@ -43,10 +40,9 @@ model.add(MaxPooling2D(2))
 model.add(Conv2D(32, (3, 3), activation='relu'))
 model.add(MaxPooling2D(2))
 model.add(Flatten())
-model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dense(3, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
-#model.summary()
 
 def init():
 	gpio.setmode(gpio.BCM)
@@ -72,6 +68,7 @@ def forward(tf):
 	gpio.output(24, True)
 	time.sleep(tf)
 	gpio.cleanup()
+
 def left(tf):
 	init()
 	gpio.output(17, False)
@@ -80,6 +77,7 @@ def left(tf):
 	gpio.output(24, False)
 	time.sleep(tf)
 	gpio.cleanup()
+
 def right(tf):
 	init()
 	gpio.output(17, True)
@@ -89,7 +87,7 @@ def right(tf):
 	time.sleep(tf)
 	gpio.cleanup()
 
-def getFrames():
+def getImage():
 	errors = False
 	im = np.zeros((WIDTH, HEIGHT, 3), np.uint8)
 	try:
@@ -115,10 +113,9 @@ def getFrames():
 	return im, errors
 
 for i in range(epochs):
-	time.sleep(5)
+	time.sleep(1)
 	game_over = False
-	input_img, errors = getFrames()
-	print(errors, 'initial image')
+	input_img, errors = getImage()
 	errors = False
 	reward = 0
 	while game_over==False:
@@ -126,20 +123,17 @@ for i in range(epochs):
 			action = np.random.randint(0, moves, size=1)[0]
 		else:
 			output = model.predict(input_img)
-			print('output',output.shape)
 			action = np.argmax(output[0])
 		if int(action) == 0:
-			forward(4)
+			forward(3)
 			print('forward')
 		elif int(action) == 1:
-			right(4)
+			right(3)
 			print('right')
 		else:
-			left(4)
+			left(3)
 			print('left')
-		input_next_img, errors = getFrames()
-		print(errors)
-		print('next image',input_next_img.shape)
+		input_next_img, errors = getImage()
 		if errors == False:
 			reward = reward + 1
 		else:
@@ -161,10 +155,7 @@ for i in range(epochs):
 			target_reward = reward + learningRate * \
 			np.amax(model.predict(input_next_img)[0])
 		desired_target = model.predict(input_img)
-		print('desired_target', desired_target,target_reward, action)
 		desired_target[0][action] = target_reward
 		model.fit(input_img, desired_target, epochs=1, verbose=0)
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
-
-model.save('clf.h5')
