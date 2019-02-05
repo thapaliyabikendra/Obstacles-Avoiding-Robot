@@ -1,1 +1,1 @@
-# Object-Avoiding-Robot-Using-CNN
+# Obstacles-Avoiding-Robot-Using-CNN
