@@ -22,7 +22,7 @@ def getDistance():
     TimeElapsed = StopTime - StartTime
     distance = (TimeElapsed * 34300) / 2
     GPIO.cleanup()
-    return distance
+    return (distance - 8 )
  
 dist = getDistance()
 print ("Measured Distance = %.1f cm" % dist)
