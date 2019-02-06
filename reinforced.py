@@ -4,7 +4,7 @@ import time
 from motor import forward, left, right
 from camera import getImage
 from configuration import MAX_MEMORY, EPOCHS, MODEL_NAME
-from cnn import model
+from cnn import create_model
 from datetime import datetime
 
 memory = []
@@ -13,6 +13,7 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
+model = create_model()
 
 for i in range(EPOCHS):
 	time.sleep(1)
@@ -27,13 +28,13 @@ for i in range(EPOCHS):
 			output = model.predict(input_img)
 			action = np.argmax(output[0])
 		if int(action) == 0:
-			forward(3)
+			forward(1.25)
 			print('forward')
 		elif int(action) == 1:
-			right(3)
+			right(1.25)
 			print('right')
 		else:
-			left(3)
+			left(1.25)
 			print('left')
 		input_next_img, errors = getImage()
 		if errors == False:
@@ -45,7 +46,7 @@ for i in range(EPOCHS):
 		memory.append((input_img, action, reward, input_next_img, game_over))
 		input_img = input_next_img
 		if game_over:
-			print("Game: {}/{}, Total Reward: {}".format(i, epochs, reward))
+			print("Game: {}/{}, Total Reward: {}".format(i, EPOCHS, reward))
 	if len(memory) > 32:
 		batch_size = 32
 	else:
