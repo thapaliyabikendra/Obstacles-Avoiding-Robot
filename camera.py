@@ -2,7 +2,7 @@ from picamera import PiCamera
 from time import sleep
 import cv2
 import numpy as np
-from configuration import WIDTH, HEIGHT, CHANNEL
+from configuration import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE
 from ultrasonic import getDistance
 
 camera = PiCamera()
@@ -19,7 +19,7 @@ def getImage():
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
 	dist = getDistance()
-	if(dist < 10):
+	if(dist < MINIMUM_DISTANCE):
 		errors = True
 	return im, errors
 
