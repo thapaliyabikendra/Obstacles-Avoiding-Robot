@@ -43,5 +43,3 @@ def getImage():
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
 	return im, errors
-
-getImage()

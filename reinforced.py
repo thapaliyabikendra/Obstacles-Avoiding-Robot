@@ -28,13 +28,13 @@ for i in range(EPOCHS):
 			output = model.predict(input_img)
 			action = np.argmax(output[0])
 		if int(action) == 0:
-			forward(3)
+			forward(1.25)
 			print('forward')
 		elif int(action) == 1:
-			right(3)
+			right(1.25)
 			print('right')
 		else:
-			left(3)
+			left(1.25)
 			print('left')
 		input_next_img, errors = getImage()
 		if errors == False:
