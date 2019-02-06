@@ -20,4 +20,3 @@ def getDistance():
 	GPIO.cleanup()
 	print ("Measured Distance = %.1f cm" % distance)
 	return (distance - 8 )
- 

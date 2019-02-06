@@ -28,7 +28,7 @@ for i in range(EPOCHS):
 			output = model.predict(input_img)
 			action = np.argmax(output[0])
 		if int(action) == 0:
-			forward(1.25)
+			forward(1)
 			print('forward')
 		elif int(action) == 1:
 			right(1.25)
