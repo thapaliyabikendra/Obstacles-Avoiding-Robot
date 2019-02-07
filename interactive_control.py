@@ -1,11 +1,11 @@
 import time
-import io
 import pygame
 import pygame.font
 import picamera
 from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
+from configuration import WIDTH, HEIGHT
 
 UP = LEFT = DOWN = RIGHT = False
 
@@ -35,9 +35,8 @@ def interactive_control():
     setup_interactive_control()
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
-        camera.resolution = (320, 240)
-        camera.framerate = 10
         time.sleep(1)
+        camera.start_preview(fullscreen = False, window = (500, 50, WIDTH, HEIGHT))			
         command = 'idle'
         while True:
             up_key, down, left, right, change, stop = get_keys()
@@ -61,15 +60,12 @@ def interactive_control():
                     command = append('right')
                     righ(1.25)
             print(command)
-            stream = io.BytesIO()
-            camera.capture(stream, format='jpeg', use_video_port=True)
-            stream.flush()
             clock.tick(30)
         pygame.quit()
 
 def setup_interactive_control():
     pygame.init()
-    display_size = (300, 400)
+    display_size = (400, 400)
     screen = pygame.display.set_mode(display_size)
     background = pygame.Surface(screen.get_size())
     color_white = (255, 255, 255)
