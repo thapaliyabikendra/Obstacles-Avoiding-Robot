@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from configuration import THRESHOLD
  
 GPIO_TRIGGER = 14
 GPIO_ECHO = 15
@@ -16,7 +17,7 @@ def getDistance():
 	while GPIO.input(GPIO_ECHO) == 1:
 		StopTime = time.time()
 	TimeElapsed = StopTime - StartTime
-	distance = (TimeElapsed * 34300) / 2
+	distance = ((TimeElapsed * 34300) / 2) - THRESHOLD
 	GPIO.cleanup()
 	print ("Measured Distance = %.1f cm" % distance)
-	return (distance - 8 )
+	return distance
