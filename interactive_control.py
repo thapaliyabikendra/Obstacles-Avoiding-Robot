@@ -36,7 +36,7 @@ def interactive_control():
     setup_interactive_control()
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
-        camera.start_preview(fullscreen = False, window = (500, 50, WIDTH, HEIGHT))			
+        camera.start_preview(fullscreen = False, window = (500, 50, CP_WIDTH, CP_HEIGHT))			
         command = 'idle'
         while True:
             up_key, down, left, right, change, stop = get_keys()
