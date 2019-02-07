@@ -11,8 +11,8 @@ camera.resolution = (HEIGHT, WIDTH)
 def getImage():
 	errors = False
 	im = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
-	camera.start_preview(fullscreen = False, window = (0, 0, WIDTH, HEIGHT))
-	camera.capture(im, 'bgr')
+	camera.start_preview(fullscreen = False, window = (0, 0, 608, 608))
+	camera.capture(im, 'bgr', use_video_port = True)
 	#cv2.imshow('yolov3-tiny', im)
 	#key = cv2.waitKey(5)
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
