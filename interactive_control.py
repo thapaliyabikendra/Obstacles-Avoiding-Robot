@@ -6,6 +6,7 @@ from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
 from configuration import WIDTH, HEIGHT
+from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
 
@@ -35,11 +36,11 @@ def interactive_control():
     setup_interactive_control()
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
-        time.sleep(1)
         camera.start_preview(fullscreen = False, window = (500, 50, WIDTH, HEIGHT))			
         command = 'idle'
         while True:
             up_key, down, left, right, change, stop = get_keys()
+            getDistance()
             if stop:
                 break
             if change:
