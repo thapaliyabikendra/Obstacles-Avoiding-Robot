@@ -9,8 +9,6 @@ def getDistance():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 	GPIO.setup(GPIO_ECHO, GPIO.IN)
-	GPIO.output(GPIO_TRIGGER, False)
-	time.sleep(0.5)
 	GPIO.output(GPIO_TRIGGER, True)
 	time.sleep(0.00001)
 	GPIO.output(GPIO_TRIGGER, False)
@@ -25,3 +23,6 @@ def getDistance():
 	GPIO.cleanup()
 	print ("Measured Distance = %.1f cm" % distance)
 	return distance
+
+if __name__ == '__main__':
+    getDistance()

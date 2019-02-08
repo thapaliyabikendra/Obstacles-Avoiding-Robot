@@ -1,10 +1,13 @@
+import numpy as np
 from camera import getImage
-from cnn import load_trained_model
+from cnn import checkModel
+from motor import forward, left, right
 
-model = load_trained_model()
+model = checkModel()
 while True:
-	input_next_img, errors = getImage()
+	input_img, errors = getImage()
 	output = model.predict(input_img)
+	print(output, output.shape )
 	action = np.argmax(output[0])
 	if int(action) == 0:
 		forward(3)

@@ -3,9 +3,8 @@ import random
 import time
 from motor import forward, left, right
 from camera import getImage
-from configuration import MAX_MEMORY, EPOCHS, MODEL_NAME
-from cnn import create_model
-from datetime import datetime
+from configuration import MAX_MEMORY, EPOCHS, MP_MN
+from cnn import checkModel
 
 memory = []
 moves = 3
@@ -13,10 +12,9 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
-model = create_model()
+model = checkModel()
 
 for i in range(EPOCHS):
-	time.sleep(1)
 	game_over = False
 	input_img, errors = getImage()
 	errors = False
@@ -63,5 +61,4 @@ for i in range(EPOCHS):
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
 
-modelname = MODEL_NAME + datetime.now().strftime('%Y%m%d%H%M')+'.h5'
-model.save(modelname)
+model.save(MP_MN)

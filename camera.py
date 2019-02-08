@@ -21,3 +21,6 @@ def getImage():
 	if(dist < MINIMUM_DISTANCE):
 		errors = True
 	return im, errors
+
+if __name__ == '__main__':
+	getImage()

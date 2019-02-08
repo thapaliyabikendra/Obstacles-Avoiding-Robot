@@ -1,16 +1,19 @@
 import time
+import numpy as np
 import pygame
 import pygame.font
 import picamera
+import cv2
+from cnn import checkModel
 from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
-from configuration import WIDTH, HEIGHT
+from configuration import WIDTH, HEIGHT, CHANNEL, CP_WIDTH, CP_HEIGHT, MP_MN, TRAIN_TIME
 from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
-
-def get_keys():
+model = checkModel()
+def getKeys():
     change = False
     stop = False
     key_to_global_name = {
@@ -32,14 +35,22 @@ def get_keys():
     return (UP, DOWN, LEFT, RIGHT, change, stop)
 
 
-def interactive_control():
-    setup_interactive_control()
+def interactiveControl():
+    setupInteractiveControl()
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
-        camera.start_preview(fullscreen = False, window = (500, 50, CP_WIDTH, CP_HEIGHT))			
+        camera.resolution = (HEIGHT, WIDTH)
+        input_img = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
+        camera.start_preview(fullscreen = False, window = (500, 50, CP_WIDTH, CP_HEIGHT))
+        camera.capture(input_img, 'bgr', use_video_port = True)
+        input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+        input_img = input_img.reshape([-1, WIDTH, HEIGHT , CHANNEL])        	
         command = 'idle'
-        while True:
-            up_key, down, left, right, change, stop = get_keys()
+        start_time = time.time()
+        now = 0
+        while(now <= TRAIN_TIME):
+            now = time.time() - start_time
+            up_key, down, left, right, change, stop = getKeys()
             getDistance()
             if stop:
                 break
@@ -47,24 +58,28 @@ def interactive_control():
                 command = 'idle'
                 if up_key:
                     command = 'forward'
+                    desired_target = np.array([[1, 0, 0]])
+                    model.fit(input_img, desired_target, epochs=1, verbose=0)
                     forward(1)
                 elif down:
                     command = 'reverse'
                     reverse(1)
-
                 append = lambda x: command + '_' + x if command != 'idle' else x
-
                 if left:
                     command = append('left')
+                    desired_target = np.array([[0, 0, 1]])
+                    model.fit(input_img, desired_target, epochs=1, verbose=0)
                     lef(1.25)
                 elif right:
                     command = append('right')
+                    desired_target = np.array([[0, 1, 0]])
+                    model.fit(input_img, desired_target, epochs=1, verbose=0)
                     righ(1.25)
             print(command)
-            clock.tick(30)
+            clock.tick(0)
         pygame.quit()
 
-def setup_interactive_control():
+def setupInteractiveControl():
     pygame.init()
     display_size = (400, 400)
     screen = pygame.display.set_mode(display_size)
@@ -79,7 +94,9 @@ def setup_interactive_control():
     pygame.display.flip()
 
 def main():
-    interactive_control()
+	print('Training Time: ', (TRAIN_TIME/60), " min")
+	interactiveControl()
+	model.save(MP_MN)
 
 if __name__ == '__main__':
     main()
