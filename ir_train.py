@@ -1,15 +1,18 @@
+import time
+import numpy as np
 import pygame
 import pygame.font
 import picamera
-import numpy as np
-from camera import save_image_with_direction
+import cv2
+from cnn import checkModel
 from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
-from configuration import HEIGHT, WIDTH, CP_WIDTH, CP_HEIGHT
+from configuration import WIDTH, HEIGHT, CHANNEL, CP_WIDTH, CP_HEIGHT, MP_MN, TRAIN_TIME
 from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
+model = checkModel()
 def getKeys():
     change = False
     stop = False
@@ -31,14 +34,23 @@ def getKeys():
                 globals()[key_to_global_name[event.key]] = down
     return (UP, DOWN, LEFT, RIGHT, change, stop)
 
+
 def interactiveControl():
     setupInteractiveControl()
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
-        camera.resolution = ( WIDTH, HEIGHT)
+        camera.resolution = (HEIGHT, WIDTH)
         camera.start_preview(fullscreen = False, window = (500, 50, CP_WIDTH, CP_HEIGHT))
         command = 'idle'
-        while(True):
+        start_time = time.time()
+        now = 0
+        while(now <= TRAIN_TIME):
+            now = time.time() - start_time
+            desired_target = np.array([[1, 0, 0]])
+            input_img = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
+            camera.capture(input_img, 'bgr', use_video_port = True)
+            input_img = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+            input_img = input_img.reshape([-1, WIDTH, HEIGHT , CHANNEL]) 
             up_key, down, left, right, change, stop = getKeys()
             getDistance()
             if stop:
@@ -47,6 +59,7 @@ def interactiveControl():
                 command = 'idle'
                 if up_key:
                     command = 'forward'
+                    desired_target = np.array([[1, 0, 0]])
                     forward(1)
                 elif down:
                     command = 'reverse'
@@ -54,24 +67,25 @@ def interactiveControl():
                 append = lambda x: command + '_' + x if command != 'idle' else x
                 if left:
                     command = append('left')
+                    desired_target = np.array([[0, 0, 1]])
                     lef(1.25)
                 elif right:
                     command = append('right')
+                    desired_target = np.array([[0, 1, 0]])
                     righ(1.25)
             print(command)
-            if(command in ('forward', 'right', 'left')):
-                input_img = save_image_with_direction(command)
-                camera.capture(input_img, use_video_port = True)
+            print('Time left : ', (TRAIN_TIME - now), ' s')
+            model.fit(input_img, desired_target, epochs=1, verbose=0)
             clock.tick(0)
         pygame.quit()
 
 def setupInteractiveControl():
     pygame.init()
-    display_size = (500, 500)
+    display_size = (400, 400)
     screen = pygame.display.set_mode(display_size)
     background = pygame.Surface(screen.get_size())
     color_white = (255, 255, 255)
-    display_font = pygame.font.Font(None, 30)
+    display_font = pygame.font.Font(None, 40)
     pygame.display.set_caption('RC Car Interactive Control')
     text = display_font.render('Use arrows to move', 1, color_white)
     text_position = text.get_rect(centerx=display_size[0] / 2)
@@ -80,7 +94,9 @@ def setupInteractiveControl():
     pygame.display.flip()
 
 def main():
+	print('Training Time: ', (TRAIN_TIME/60), " min")
 	interactiveControl()
+	model.save(MP_MN)
 
 if __name__ == '__main__':
     main()

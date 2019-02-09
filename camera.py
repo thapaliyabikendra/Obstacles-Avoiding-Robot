@@ -1,14 +1,13 @@
 from picamera import PiCamera
-from time import sleep
+import time
 import cv2
 import numpy as np
-from configuration import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE, CP_WIDTH, CP_HEIGHT
+from configuration import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE, CP_WIDTH, CP_HEIGHT, TRAINING_PATH
 from ultrasonic import getDistance
 
-camera = PiCamera()
-camera.resolution = (HEIGHT, WIDTH)
-
 def getImage():
+	camera = PiCamera()
+	camera.resolution = (HEIGHT, WIDTH)
 	errors = False
 	im = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
 	camera.start_preview(fullscreen = False, window = (0, 0, CP_WIDTH, CP_HEIGHT))
@@ -21,6 +20,9 @@ def getImage():
 	if(dist < MINIMUM_DISTANCE):
 		errors = True
 	return im, errors
+
+def save_image_with_direction( direction):
+	return TRAINING_PATH + direction + str(time.time()) + '.jpg'
 
 if __name__ == '__main__':
 	getImage()
