@@ -4,6 +4,7 @@ import pygame
 import pygame.font
 import picamera
 import cv2
+from  threading import Thread
 from cnn import checkModel
 from motor import forward, reverse
 from motor import left as lef
@@ -60,7 +61,8 @@ def interactiveControl():
                 if up_key:
                     command = 'forward'
                     desired_target = np.array([[1, 0, 0]])
-                    forward(1)
+                    t1 = Thread(target = forward, args = (1,))
+                    t1.start()
                 elif down:
                     command = 'reverse'
                     reverse(1)
@@ -68,14 +70,17 @@ def interactiveControl():
                 if left:
                     command = append('left')
                     desired_target = np.array([[0, 0, 1]])
-                    lef(1.25)
+                    t2 = Thread(target = lef, args = (1.25,))
+                    t2.start()
                 elif right:
                     command = append('right')
                     desired_target = np.array([[0, 1, 0]])
-                    righ(1.25)
+                    t3 = Thread(target = righ, args = (1.25,))
+                    t3.start()
             print(command)
             print('Time left : ', (TRAIN_TIME - now), ' s')
-            model.fit(input_img, desired_target, epochs=1, verbose=0)
+            if command in ('forward', 'left', 'right'):
+                model.fit(input_img, desired_target, epochs=1, verbose=0)
             clock.tick(0)
         pygame.quit()
 
@@ -96,6 +101,7 @@ def setupInteractiveControl():
 def main():
 	print('Training Time: ', (TRAIN_TIME/60), " min")
 	interactiveControl()
+	print('TIME UP !!!')
 	model.save(MP_MN)
 
 if __name__ == '__main__':
