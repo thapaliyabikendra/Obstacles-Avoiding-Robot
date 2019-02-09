@@ -61,9 +61,10 @@ def interactiveControl():
                 if up_key:
                     command = 'forward'
                     desired_target = np.array([[1, 0, 0]])
-                    t1 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
+                    t1 = Thread(target =forward, args = (1, ))
                     t1.start()
-                    forward(1)
+                    model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
+                    t1.join()
                 elif down:
                     command = 'reverse'
                     reverse(1)
@@ -71,15 +72,17 @@ def interactiveControl():
                 if left:
                     command = append('left')
                     desired_target = np.array([[0, 0, 1]])
-                    t2 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
+                    t2 = Thread(target = lef, args = (1.25, ))
                     t2.start()
-                    lef(1.25)
+                    model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
+                    t2.join()
                 elif right:
                     command = append('right')
                     desired_target = np.array([[0, 1, 0]])
-                    t3 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
+                    t3 = Thread(target = righ, args = (1.25, ))
                     t3.start()
-                    righ(1.25)
+                    model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
+                    t3.join()
             print(command)
             print('Time left : ', (TRAIN_TIME - now), ' s')
             clock.tick(0)

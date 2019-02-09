@@ -1,7 +1,6 @@
 import numpy as np
 import random
 import time
-from threading import Thread
 from motor import forward, left, right
 from camera import getImage
 from configuration import MAX_MEMORY, EPOCHS, MP_MN
@@ -58,8 +57,7 @@ for i in range(EPOCHS):
 			np.amax(model.predict(input_next_img)[0])
 		desired_target = model.predict(input_img)
 		desired_target[0][action] = target_reward
-		t1 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
-		t1.start()
+		model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
 

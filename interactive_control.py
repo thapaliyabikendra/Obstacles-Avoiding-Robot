@@ -2,14 +2,19 @@ import pygame
 import pygame.font
 import picamera
 import numpy as np
-from camera import save_image_with_direction
+import time
 from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
-from configuration import HEIGHT, WIDTH, CP_WIDTH, CP_HEIGHT
+from configuration import HEIGHT, WIDTH, CP_WIDTH, CP_HEIGHT, TRAINING_PATH
 from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
+
+
+def save_image_with_direction( direction):
+	return TRAINING_PATH + direction + str(time.time()) + '.jpg'
+
 def getKeys():
     change = False
     stop = False
