@@ -11,7 +11,6 @@ from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
 
-
 def save_image_with_direction( direction):
 	return TRAINING_PATH + direction + str(time.time()) + '.jpg'
 
@@ -56,18 +55,17 @@ def interactiveControl():
                 elif down:
                     command = 'reverse'
                     reverse(1)
-                append = lambda x: command + '_' + x if command != 'idle' else x
-                if left:
-                    command = append('left')
+                elif left:
+                    command = 'left'
                     lef(1.25)
                 elif right:
-                    command = append('right')
+                    command = 'right'
                     righ(1.25)
             print(command)
             if(command in ('forward', 'right', 'left')):
                 input_img = save_image_with_direction(command)
                 camera.capture(input_img, use_video_port = True)
-            clock.tick(0)
+            clock.tick(10)
         pygame.quit()
 
 def setupInteractiveControl():

@@ -11,7 +11,7 @@ def getImage():
 	camera.resolution = (HEIGHT, WIDTH)
 	errors = False
 	im = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
-	camera.start_preview(fullscreen = False, window = (0, 0, CP_WIDTH, CP_HEIGHT))
+	camera.start_preview(fullscreen = False, window = (0, 100, CP_WIDTH, CP_HEIGHT))
 	camera.capture(im, 'bgr', use_video_port = True)
 	#cv2.imshow('yolov3-tiny', im)
 	#key = cv2.waitKey(5)
