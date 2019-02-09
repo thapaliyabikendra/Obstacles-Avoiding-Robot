@@ -41,7 +41,7 @@ def interactiveControl():
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
         camera.resolution = (HEIGHT, WIDTH)
-        camera.start_preview(fullscreen = False, window = (500, 50, CP_WIDTH, CP_HEIGHT))
+        camera.start_preview(fullscreen = False, window = (200, 0, CP_WIDTH, CP_HEIGHT))
         command = 'idle'
         start_time = time.time()
         now = 0
@@ -61,8 +61,9 @@ def interactiveControl():
                 if up_key:
                     command = 'forward'
                     desired_target = np.array([[1, 0, 0]])
-                    t1 = Thread(target = forward, args = (1,))
+                    t1 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
                     t1.start()
+                    forward(1)
                 elif down:
                     command = 'reverse'
                     reverse(1)
@@ -70,17 +71,17 @@ def interactiveControl():
                 if left:
                     command = append('left')
                     desired_target = np.array([[0, 0, 1]])
-                    t2 = Thread(target = lef, args = (1.25,))
+                    t2 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
                     t2.start()
+                    lef(1.25)
                 elif right:
                     command = append('right')
                     desired_target = np.array([[0, 1, 0]])
-                    t3 = Thread(target = righ, args = (1.25,))
+                    t3 = Thread(target = model.fit, kwargs = dict(x= input_img, y = desired_target, epochs=1, verbose=0))
                     t3.start()
+                    righ(1.25)
             print(command)
             print('Time left : ', (TRAIN_TIME - now), ' s')
-            if command in ('forward', 'left', 'right'):
-                model.fit(input_img, desired_target, epochs=1, verbose=0)
             clock.tick(0)
         pygame.quit()
 
