@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from cnn import checkModel
-from configuration import MP_MN, TRAINING_PATH, WIDTH, HEIGHT , CHANNEL
+from config import MP_MN, TRAINING_PATH, WIDTH, HEIGHT , CHANNEL
 import os
 import re
 

@@ -2,6 +2,7 @@ import numpy as np
 from camera import getImage
 from cnn import checkModel
 from motor import forward, left, right
+from config import FB_TIME, LR_TIME
 
 model = checkModel()
 while True:
@@ -10,12 +11,12 @@ while True:
 	print(output, output.shape )
 	action = np.argmax(output[0])
 	if int(action) == 0:
-		forward(3)
+		forward(FB_TIME)
 		print('forward')
 	elif int(action) == 1:
-		right(3)
+		right(LR_TIME)
 		print('right')
 	else:
-		left(3)
+		left(LR_TIME)
 		print('left')
 

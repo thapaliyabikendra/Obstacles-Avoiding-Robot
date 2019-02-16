@@ -9,7 +9,7 @@ from cnn import checkModel
 from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
-from configuration import WIDTH, HEIGHT, CHANNEL, CP_WIDTH, CP_HEIGHT, MP_MN, TRAIN_TIME
+from config import WIDTH, HEIGHT, CHANNEL, CP_WIDTH, CP_HEIGHT, MP_MN, TRAIN_TIME, FB_TIME, LR_TIME
 from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
@@ -61,25 +61,25 @@ def interactiveControl():
                 if up_key:
                     command = 'forward'
                     desired_target = np.array([[1, 0, 0]])
-                    t1 = Thread(target =forward, args = (1, ))
+                    t1 = Thread(target =forward, args = (FB_TIME, ))
                     t1.start()
                     model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
                     t1.join()
                 elif down:
                     command = 'reverse'
-                    reverse(1)
+                    reverse(FB_TIME)
                 append = lambda x: command + '_' + x if command != 'idle' else x
                 if left:
                     command = append('left')
                     desired_target = np.array([[0, 0, 1]])
-                    t2 = Thread(target = lef, args = (1.25, ))
+                    t2 = Thread(target = lef, args = (LR_TIME, ))
                     t2.start()
                     model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
                     t2.join()
                 elif right:
                     command = append('right')
                     desired_target = np.array([[0, 1, 0]])
-                    t3 = Thread(target = righ, args = (1.25, ))
+                    t3 = Thread(target = righ, args = (LR_TIME, ))
                     t3.start()
                     model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
                     t3.join()

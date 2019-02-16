@@ -3,7 +3,7 @@ import random
 import time
 from motor import forward, left, right
 from camera import getImage
-from configuration import MAX_MEMORY, EPOCHS, MP_MN
+from config import MAX_MEMORY, EPOCHS, MP_MN, FB_TIME, LR_TIME
 from cnn import checkModel
 
 memory = []
@@ -26,13 +26,13 @@ for i in range(EPOCHS):
 			output = model.predict(input_img)
 			action = np.argmax(output[0])
 		if int(action) == 0:
-			forward(1)
+			forward(FB_TIME)
 			print('forward')
 		elif int(action) == 1:
-			right(1.25)
+			right(LR_TIME)
 			print('right')
 		else:
-			left(1.25)
+			left(LR_TIME)
 			print('left')
 		input_next_img, errors = getImage()
 		if errors == False:

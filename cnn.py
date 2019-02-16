@@ -1,7 +1,7 @@
 import os
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
-from configuration import WIDTH, HEIGHT, CHANNEL, MODEL_PATH, MAXIMUM_MODEL_NUMBER
+from config import WIDTH, HEIGHT, CHANNEL, MODEL_PATH, MAXIMUM_MODEL_NUMBER
 from date_from_filenames import getMinDate, getFileDetails, getMaxDate
 
 def createModel():

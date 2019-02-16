@@ -1,7 +1,7 @@
 import os
 import re
 import datetime
-from configuration import MODEL_PATH
+from config import MODEL_PATH
 
 date_pattern = re.compile(r'(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})\.')
 

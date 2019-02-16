@@ -6,7 +6,7 @@ import time
 from motor import forward, reverse
 from motor import left as lef
 from motor import right as righ
-from configuration import HEIGHT, WIDTH, CP_WIDTH, CP_HEIGHT, TRAINING_PATH
+from config import HEIGHT, WIDTH, CP_WIDTH, CP_HEIGHT, TRAINING_PATH, FB_TIME, LR_TIME
 from ultrasonic import getDistance
 
 UP = LEFT = DOWN = RIGHT = False
@@ -51,16 +51,16 @@ def interactiveControl():
                 command = 'idle'
                 if up_key:
                     command = 'forward'
-                    forward(1)
+                    forward(FB_TIME)
                 elif down:
                     command = 'reverse'
-                    reverse(1)
+                    reverse(FB_TIME)
                 elif left:
                     command = 'left'
-                    lef(1.25)
+                    lef(LR_TIME)
                 elif right:
                     command = 'right'
-                    righ(1.25)
+                    righ(LR_TIME)
             print(command)
             if(command in ('forward', 'right', 'left')):
                 input_img = save_image_with_direction(command)

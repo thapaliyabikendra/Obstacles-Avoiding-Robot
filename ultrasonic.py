@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from configuration import THRESHOLD
+from config import THRESHOLD
  
 GPIO_TRIGGER = 14
 GPIO_ECHO = 15

@@ -2,7 +2,7 @@ from picamera import PiCamera
 import time
 import cv2
 import numpy as np
-from configuration import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE, CP_WIDTH, CP_HEIGHT
+from config import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE, CP_WIDTH, CP_HEIGHT
 from ultrasonic import getDistance
 
 camera = PiCamera()
