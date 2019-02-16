@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Robot Control</string>
+    <string name="title_activity_fsimage_view">FSimageView</string>
+</resources>
