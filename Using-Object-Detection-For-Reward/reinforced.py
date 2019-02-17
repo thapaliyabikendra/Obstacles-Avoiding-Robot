@@ -3,9 +3,14 @@ import random
 import time
 from motor import forward, left, right
 from camera import getImage
+<<<<<<< HEAD:Using-Object-Detection-For-Reward/reinforced.py
 from configuration import MAX_MEMORY, EPOCHS, MODEL_NAME
 from cnn import create_model
 from datetime import datetime
+=======
+from config import MAX_MEMORY, EPOCHS, MP_MN, FB_TIME, LR_TIME
+from cnn import checkModel
+>>>>>>> ultrasonic:reinforced.py
 
 memory = []
 moves = 3
@@ -13,10 +18,13 @@ learningRate = 0.9
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
+<<<<<<< HEAD:Using-Object-Detection-For-Reward/reinforced.py
 model = create_model()
+=======
+model = checkModel()
+>>>>>>> ultrasonic:reinforced.py
 
 for i in range(EPOCHS):
-	time.sleep(1)
 	game_over = False
 	input_img, errors = getImage()
 	errors = False
@@ -28,6 +36,7 @@ for i in range(EPOCHS):
 			output = model.predict(input_img)
 			action = np.argmax(output[0])
 		if int(action) == 0:
+<<<<<<< HEAD:Using-Object-Detection-For-Reward/reinforced.py
 			forward(1.25)
 			print('forward')
 		elif int(action) == 1:
@@ -35,6 +44,15 @@ for i in range(EPOCHS):
 			print('right')
 		else:
 			left(1.25)
+=======
+			forward(FB_TIME)
+			print('forward')
+		elif int(action) == 1:
+			right(LR_TIME)
+			print('right')
+		else:
+			left(LR_TIME)
+>>>>>>> ultrasonic:reinforced.py
 			print('left')
 		input_next_img, errors = getImage()
 		if errors == False:
@@ -59,9 +77,8 @@ for i in range(EPOCHS):
 			np.amax(model.predict(input_next_img)[0])
 		desired_target = model.predict(input_img)
 		desired_target[0][action] = target_reward
-		model.fit(input_img, desired_target, epochs=1, verbose=0)
+		model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
 
-modelname = MODEL_NAME + datetime.now().strftime('%Y%m%d%H%M')+'.h5'
-model.save(modelname)
+model.save(MP_MN)
