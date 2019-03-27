@@ -10,13 +10,13 @@ camera = PiCamera()
 def getImage():
 	camera.resolution = (HEIGHT, WIDTH)
 	errors = False
-	im = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
+	im = np.empty(( WIDTH, HEIGHT, 3), dtype=np.float32)
 	camera.start_preview(fullscreen = False, window = (0, 100, CP_WIDTH, CP_HEIGHT))
 	camera.capture(im, 'bgr', use_video_port = True)
 	#cv2.imshow('yolov3-tiny', im)
 	#key = cv2.waitKey(5)
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
+	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL]) / 255.
 	dist = getDistance()
 	if(dist < MINIMUM_DISTANCE):
 		errors = True
