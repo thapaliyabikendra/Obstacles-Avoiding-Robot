@@ -67,7 +67,7 @@ def reverse(tf):
 if __name__ == '__main__':
 	#reverse(1)
 	forward(1)
-	right(1.5)
+	right(1)
 	#left(1.5)
 	#forward(1)
 	#left(1.5)
