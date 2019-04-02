@@ -11,7 +11,6 @@ def createModel():
 	model.add(Conv2D(32, (3, 3), activation='relu'))
 	model.add(MaxPooling2D(2))
 	model.add(Flatten())
-	model.add(Dense(32, activation='relu'))
 	model.add(Dense(3, activation='softmax'))
 	model.compile(loss='categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
 	return model

@@ -14,9 +14,11 @@ def getImage():
 	im = np.empty(( WIDTH, HEIGHT, 3), dtype=np.uint8)
 	camera.start_preview(fullscreen = False, window = (0, 100, CP_WIDTH, CP_HEIGHT))
 	camera.capture(im, 'bgr', use_video_port = True)
-	
+	time.sleep(2)
 	#cv2.imshow('yolov3-tiny', im)
-	#key = cv2.waitKey(5)
+	#key = cv2.waitKey(15)
+	print(im.shape)
+	
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
 	dist = getDistance()

@@ -40,6 +40,7 @@ def interactiveControl():
     clock = pygame.time.Clock()
     with picamera.PiCamera() as camera:
         camera.resolution = ( WIDTH, HEIGHT)
+        camera.rotation = 270
         camera.start_preview(fullscreen = False, window = (500, 50, CP_WIDTH, CP_HEIGHT))
         command = 'idle'
         while(True):
