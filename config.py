@@ -23,5 +23,5 @@ IN1 = 17
 IN2 = 22
 IN3 = 23
 IN4 = 24
-FB_TIME = 1
-LR_TIME = 1.25
+FB_TIME = 0.8
+LR_TIME = 0.8
