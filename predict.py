@@ -16,7 +16,7 @@ while True:
 	elif int(action) == 1:
 		right(LR_TIME)
 		print('right')
-	else:
+	elif int(action) == 2:
 		left(LR_TIME)
 		print('left')
 

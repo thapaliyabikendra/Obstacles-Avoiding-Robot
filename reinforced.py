@@ -57,7 +57,7 @@ for i in range(EPOCHS):
 			np.amax(model.predict(input_next_img)[0])
 		desired_target = model.predict(input_img)
 		desired_target[0][action] = target_reward
-		model.fit(x= input_img, y = desired_target, epochs=1, verbose=0)
+		model.fit(x= input_img, y = desired_target, epochs = 2, verbose = 1)
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
 

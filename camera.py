@@ -17,10 +17,10 @@ def getImage():
 	time.sleep(2)
 	#cv2.imshow('yolov3-tiny', im)
 	#key = cv2.waitKey(15)
-	print(im.shape)
-	
+	#print(im.shape)
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
+	im = im / 255.
 	dist = getDistance()
 	if(dist < MINIMUM_DISTANCE):
 		errors = True
