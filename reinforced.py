@@ -2,9 +2,9 @@ import numpy as np
 import random
 import time
 from motor import forward, left, right
-from camera import getImage
 from config import MAX_MEMORY, EPOCHS, MP_MN, FB_TIME, LR_TIME
 from cnn import checkModel
+import camera
 
 memory = []
 moves = 3
@@ -16,7 +16,7 @@ model = checkModel()
 
 for i in range(EPOCHS):
 	game_over = False
-	input_img, errors = getImage()
+	input_img, errors = camera.getImage()
 	errors = False
 	reward = 0
 	while game_over==False:
@@ -24,17 +24,19 @@ for i in range(EPOCHS):
 			action = np.random.randint(0, moves, size=1)[0]
 		else:
 			output = model.predict(input_img)
+			print(output)
 			action = np.argmax(output[0])
+			print(action)
 		if int(action) == 0:
 			forward(FB_TIME)
 			print('forward')
 		elif int(action) == 1:
 			right(LR_TIME)
 			print('right')
-		else:
+		elif int(action) == 2:
 			left(LR_TIME)
 			print('left')
-		input_next_img, errors = getImage()
+		input_next_img, errors = camera.getImage()
 		if errors == False:
 			reward = reward + 1
 		else:
@@ -55,9 +57,19 @@ for i in range(EPOCHS):
 		if game_over == False:
 			target_reward = reward + learningRate * \
 			np.amax(model.predict(input_next_img)[0])
+		"""
 		desired_target = model.predict(input_img)
 		desired_target[0][action] = target_reward
-		model.fit(x= input_img, y = desired_target, epochs = 2, verbose = 1)
+		"""
+		desired_target = np.array([[1, 0, 0]])
+		if action == 0:
+			desired_target = np.array([[1, 0, 0]])
+		elif action == 1:
+			desired_target = np.array([[0, 1, 0]])
+		elif action == 2:
+			desired_target = np.array([[0, 0, 1]])			
+		print(desired_target)
+		model.fit(x= input_img, y = desired_target, epochs = 1, verbose = 1)
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
 
