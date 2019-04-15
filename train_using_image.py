@@ -26,7 +26,7 @@ def getTarget(desired_target):
 
 def getDataset():
 	filenames = os.listdir(TRAINING_PATH)
-	dataset = np.ndarray(shape=(len(filenames), WIDTH, HEIGHT))
+	dataset = np.ndarray(shape=(len(filenames), WIDTH, HEIGHT),  dtype=np.float32)
 	label = np.ndarray(shape=(len(filenames), 3 ),  dtype=np.float32)
 	for i, f in enumerate(filenames):
 		desired_target = getDesiredTarget(f)

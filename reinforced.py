@@ -52,6 +52,9 @@ for i in range(EPOCHS):
 	else:
 		batch_size = len(memory)
 	batch = random.sample(memory, batch_size)
+	dataset = np.ndarray(shape=(len(filenames), WIDTH, HEIGHT),  dtype=np.float32)
+	label = np.ndarray(shape=(len(filenames), 3 ),  dtype=np.float32)
+	i = 0
 	for input_img, action, reward, input_next_img, game_over in batch:
 		target_reward = reward
 		if game_over == False:
@@ -69,7 +72,14 @@ for i in range(EPOCHS):
 		elif action == 2:
 			desired_target = np.array([[0, 0, 1]])			
 		print(desired_target)
-		model.fit(x= input_img, y = desired_target, epochs = 1, verbose = 1)
+		dataset[i] = input_img
+		label[i] = desired_target
+		i++
+	if len(memory) < 32:
+		model.fit(x= input_img, y = desired_target, epochs = 1, batch_size = len(memory), verbose = 1)
+	else:
+		model.fit(x= input_img, y = desired_target, epochs = 1, batch_size = 32, verbose = 1)
+			
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
 
