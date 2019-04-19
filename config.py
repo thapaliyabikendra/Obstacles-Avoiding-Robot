@@ -10,8 +10,8 @@ CP_WIDTH = 608
 CP_HEIGHT = 608
 
 #training details
-EPOCHS = 1
-MAX_MEMORY = 512
+EPOCHS = 5
+MAX_MEMORY = 256
 MODEL_PATH = 'trained_models/'
 TRAIN_TIME =  100
 

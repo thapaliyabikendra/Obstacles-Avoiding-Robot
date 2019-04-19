@@ -2,7 +2,7 @@ import numpy as np
 import random
 import time
 from motor import forward, left, right
-from config import MAX_MEMORY, EPOCHS, MP_MN, FB_TIME, LR_TIME
+from config import MAX_MEMORY, EPOCHS, MP_MN, FB_TIME, LR_TIME, WIDTH, HEIGHT
 from cnn import checkModel
 import camera
 
@@ -52,8 +52,9 @@ for i in range(EPOCHS):
 	else:
 		batch_size = len(memory)
 	batch = random.sample(memory, batch_size)
-	dataset = np.ndarray(shape=(batch_size, WIDTH, HEIGHT),  dtype=np.float32)
+	dataset = np.ndarray(shape=(batch_size, WIDTH, HEIGHT, 1),  dtype=np.float32)
 	label = np.ndarray(shape=(batch_size, 3 ),  dtype=np.float32)
+	print(batch_size)
 	i = 0
 	for input_img, action, reward, input_next_img, game_over in batch:
 		target_reward = reward
@@ -64,21 +65,18 @@ for i in range(EPOCHS):
 		desired_target = model.predict(input_img)
 		desired_target[0][action] = target_reward
 		"""
-		desired_target = np.array([[1, 0, 0]])
+		desired_target = np.array([1, 0, 0])
 		if action == 0:
-			desired_target = np.array([[1, 0, 0]])
+			desired_target = np.array([1, 0, 0])
 		elif action == 1:
-			desired_target = np.array([[0, 1, 0]])
+			desired_target = np.array([0, 1, 0])
 		elif action == 2:
-			desired_target = np.array([[0, 0, 1]])			
+			desired_target = np.array([0, 0, 1])			
 		print(desired_target)
 		dataset[i] = input_img
 		label[i] = desired_target
 		i = i + 1
-	if len(memory) < 32:
-		model.fit(x = input_img, y = desired_target, epochs = 1, batch_size = batch_size, verbose = 1)
-	else:
-		model.fit(x = input_img, y = desired_target, epochs = 1, batch_size = batch_size, verbose = 1)
+	model.fit(x = dataset, y = label, epochs = 1, batch_size = 4, verbose = 1)
 			
 	if epsilon > epsilon_min:
 		epsilon *= epsilon_decay
