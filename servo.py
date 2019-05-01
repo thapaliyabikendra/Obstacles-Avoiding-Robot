@@ -10,15 +10,15 @@ p.start(7.5)
 sleep(2)
 
 
-def right():
+def righ():
 	p.ChangeDutyCycle(2.5)
 	sleep(2)
 
-def front():
+def fron():
 	p.ChangeDutyCycle(7.5)
 	sleep(2)
 
-def left():
+def lef():
 	p.ChangeDutyCycle(12.5)
 	sleep(2)
 

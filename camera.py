@@ -1,11 +1,12 @@
 from picamera import PiCamera
 from subprocess import Popen, PIPE
-import threading
 from time import sleep
 import os, fcntl
 import cv2
 import numpy as np
-from configuration import WIDTH, HEIGHT, CHANNEL
+from config import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE
+from ultrasonic import getDistance 
+
 iframe = 0
 camera = PiCamera()
 camera.resolution = (WIDTH, HEIGHT)
@@ -38,12 +39,17 @@ def getImage():
 			yolo_proc.stdin.flush()
 		if len(stdout.strip())>0:
 			print('get %s' % stdout)
-			errors = True
+			error1 = True
 	except Exception:
 		pass
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
+	dist = getDistance()
+	if(dist < MINIMUM_DISTANCE):
+		error2 = True
+	if (error1 & error2):
+		errors = True
 	return im, errors
 	
 if __name__ == '__main__':
-	getImage()
+	img, err = getImage()
