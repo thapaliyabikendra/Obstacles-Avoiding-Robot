@@ -9,6 +9,7 @@ from configuration import WIDTH, HEIGHT, CHANNEL
 iframe = 0
 camera = PiCamera()
 camera.resolution = (WIDTH, HEIGHT)
+camera.rotation = 270
 camera.capture('frame.jpg')
 
 yolo_proc = Popen(["./darknet",
@@ -43,3 +44,6 @@ def getImage():
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
 	return im, errors
+	
+if __name__ == '__main__':
+	getImage()
