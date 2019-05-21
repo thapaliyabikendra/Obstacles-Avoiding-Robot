@@ -1,6 +1,6 @@
 #image
-WIDTH = 320
-HEIGHT = 240
+WIDTH = 608
+HEIGHT = 608
 CHANNEL = 1
 
 #servo
@@ -25,8 +25,8 @@ FB_TIME = 0.8
 LR_TIME = 0.8
 
 #ultrasonic
-TRIGGER = 14
-ECHO = 15
+TRIGGER = 4
+ECHO = 3
 THRESHOLD = 0
 MINIMUM_DISTANCE = 20
 

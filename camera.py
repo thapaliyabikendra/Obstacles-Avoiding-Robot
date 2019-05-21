@@ -5,7 +5,9 @@ import os, fcntl
 import cv2
 import numpy as np
 from config import WIDTH, HEIGHT, CHANNEL, MINIMUM_DISTANCE
-from ultrasonic import getDistance 
+#import keras
+#from ultrasonic import getDistance 
+import re
 
 iframe = 0
 camera = PiCamera()
@@ -22,7 +24,7 @@ yolo_proc = Popen(["./darknet",
 fcntl.fcntl(yolo_proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
 
 def getImage():
-	errors = False
+	error1, error2 = False, False
 	im = np.zeros((WIDTH, HEIGHT, 3), np.uint8)
 	try:
 		stdout = yolo_proc.stdout.read().decode('utf-8')
@@ -39,17 +41,25 @@ def getImage():
 			yolo_proc.stdin.flush()
 		if len(stdout.strip())>0:
 			print('get %s' % stdout)
-			error1 = True
+			a = re.search('person', stdout)
+			print('group',a.group())
+			#if a.group == 'person' | a.group == 'car' | a.group == 'bus' |a.group == 'truck' | a.group == 'motorbike' | a.group == 'bicycle':
+			if a.group() == 'person':
+				error1 = True
+				#print('hello')
+				
 	except Exception:
 		pass
 	im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
 	im = im.reshape([-1, WIDTH, HEIGHT , CHANNEL])
+	"""
 	dist = getDistance()
 	if(dist < MINIMUM_DISTANCE):
 		error2 = True
 	if (error1 & error2):
 		errors = True
-	return im, errors
+		"""
+	return error1
 	
 if __name__ == '__main__':
-	img, err = getImage()
+	err = getImage()
